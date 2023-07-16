@@ -8,17 +8,8 @@
  * Sơ đồ chân header và sơ đồ GPIO tương ứng:
  *   MOSI | MISO | GND | 3.3V | CS | CLK
  *    12     13    GND   3.3V   15   14
- **************************************
- ****************************/
- 
-#define MIN_SERVO_180_SPEED 204
-#define MAX_SERVO_180_SPEED 410
-#define MIN_SERVO_360_SPEED 93
-#define MAX_SERVO_360_SPEED 440
-#define Servo_180_1 2
-#define Servo_180_2 3
-#define Servo_360_1 4
-#define Servo_360_2 5
+ ******************************************************************/
+
 #define PS2_DAT 12 // MISO
 #define PS2_CMD 13 // MOSI
 #define PS2_SEL 15 // SS
@@ -50,7 +41,7 @@ void setup()
   int error = -1;
   for (int i = 0; i < 10; i++) // thử kết nối với tay cầm ps2 trong 10 lần
   {
-    delay(1000); // đợi 1 giây
+    delay(50); // đợi 1 giây
     // cài đặt chân và các chế độ: GamePad(clock, command, attention, data, Pressures?, Rumble?) check for error
     error = ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, pressures, rumble);
     Serial.print(".");
@@ -138,100 +129,59 @@ void ps2Control(){
     Serial.print(",");
     Serial.println(ps2x.Analog(PSS_RX), DEC);
   }
-  if (ps2x.Analog(PSS_LY)<128)
-  {
+if (ps2x.Analog(PSS_RX)<107)
+{
+  pwm.setPWM(14,0,0);
+  pwm.setPWM(15,0,1024);
 
-    if (ps2x.Analog(PSS_LX) < 84.5)
-    {
-      pwm.setPWM(14,0,0);
-      pwm.setPWM(15,0,1000);
+  pwm.setPWM(10,0,0);
+  pwm.setPWM(11,0,1024);
+} else if (ps2x.Analog(PSS_RX)>147)
+{
+  pwm.setPWM(14,0,1024);
+  pwm.setPWM(15,0,0);
 
-      pwm.setPWM(10,0,300);
-      pwm.setPWM(11,0,0);
-    } else if (ps2x.Analog(PSS_LX) > 169.5) 
-    {
-      pwm.setPWM(14,0,0);
-      pwm.setPWM(15,0,300);
+  pwm.setPWM(10,0,1024);
+  pwm.setPWM(11,0,0);
+} else if (ps2x.Analog(PSS_LY)<118)
+{
+  pwm.setPWM(14,0,0);
+  pwm.setPWM(15,0,2048);
 
-      pwm.setPWM(10,0,1000);
-      pwm.setPWM(11,0,0);
-    } else 
-    {
-      pwm.setPWM(14,0,0);
-      pwm.setPWM(15,0,1200);
+  pwm.setPWM(10,0,2048);
+  pwm.setPWM(11,0,0);
+} else if (ps2x.Analog(PSS_LY)>138)
+{
+  pwm.setPWM(14,0,2048);
+  pwm.setPWM(15,0,0);
 
-      pwm.setPWM(10,0,1200);
-      pwm.setPWM(11,0,0);
-    }
-  } else if (ps2x.Analog(PSS_LY)>128)
-  {
-    if (ps2x.Analog(PSS_LX) < 84.5)
-    {
-      pwm.setPWM(14,0,300);
-      pwm.setPWM(15,0,0);
+  pwm.setPWM(10,0,0);
+  pwm.setPWM(11,0,2048);
+} else 
+{
+  pwm.setPWM(14,0,0);
+  pwm.setPWM(15,0,0);
 
-      pwm.setPWM(10,0,0);
-      pwm.setPWM(11,0,1000);
-    } else if (ps2x.Analog(PSS_LX) > 169.5) 
-    {
-      pwm.setPWM(14,0,1000);
-      pwm.setPWM(15,0,0);
+  pwm.setPWM(10,0,0);
+  pwm.setPWM(11,0,0);
+}
+  
+  
 
-      pwm.setPWM(10,0,0);
-      pwm.setPWM(11,0,300);
-    } else 
-    {
-      pwm.setPWM(14,0,1200);
-      pwm.setPWM(15,0,0);
-
-      pwm.setPWM(10,0,0);
-      pwm.setPWM(11,0,1200);
-    }
-  } else
-  {
-    pwm.setPWM(14,0,0);
-    pwm.setPWM(15,0,0);
-
-    pwm.setPWM(10,0,0);
-    pwm.setPWM(11,0,0);
-  }
   delay(50);
-  if (ps2x.Button(PSB_CROSS)){
+  if (ps2x.ButtonPressed(PSB_CROSS)){
     pwm.setPWM(8, 0, 4095);
     pwm.setPWM(9, 0, 0);
     Serial.println("× Pressed");
   }
-  if (ps2x.Button(PSB_TRIANGLE)){
+  if (ps2x.ButtonPressed(PSB_TRIANGLE)){
     pwm.setPWM(8, 0, 0);
     pwm.setPWM(9, 0, 4095);
     Serial.println("△ Pressed");
-  } 
-  if (ps2x.ButtonReleased(PSB_CROSS) || ps2x.ButtonReleased(PSB_TRIANGLE)){
-    pwm.setPWM(8,0,0);
-    pwm.setPWM(9,0,0);
   }
-  if (ps2x.Button(PSB_SQUARE)){
-    pwm.setPWM(12, 0, 4095);
-    pwm.setPWM(13, 0, 0);
-    Serial.println(" Pressed");
-  }
-  if (ps2x.Button(PSB_CIRCLE)){
-    pwm.setPWM(12, 0, 0);
-    pwm.setPWM(13, 0, 4095);
+    if (ps2x.ButtonPressed(PSB_SQUARE)){
+    pwm.setPWM(8, 0, 0);
+    pwm.setPWM(9, 0, 0);
     Serial.println("△ Pressed");
   } 
-  if (ps2x.ButtonReleased(PSB_SQUARE) || ps2x.ButtonReleased(PSB_CIRCLE)){
-    pwm.setPWM(12,0,0);
-    pwm.setPWM(13,0,0);
-  }
 }
-
-
-
-
-
-
-
-
-
-
