@@ -1,11 +1,26 @@
 #include <AFMotor.h>
 #include <PS2X_lib.h>
-#define PS2_DAT 12 // MISO
-#define PS2_CMD 13 // MOSI
-#define PS2_SEL 15 // SS
-#define PS2_CLK 14 // SLK
+#define PS2_DAT 12 // Data
+#define PS2_CMD 11 // Command
+#define PS2_SEL 10 // Attention
+#define PS2_CLK 13 // CLock
 #define pressures false
 #define rumble false
+
+///2 dây điều khiển 2 servo kết nối với chân số 9 và 10. Nguồn nuôi lấy trực tiếp từ board Arduino (nguồn 5V).
+///Motor 1 nối với chân 11
+///Motor 2 nối với chân 3
+//Motor 3 nối với chân 5
+//Motor 4 nối với chân 6
+
+ //analogWrite	tỉ lệ	chu kì xung
+//analogWrite(0)	0/255	0%
+//analogWrite(64)	64/255	25%
+//analogWrite(127)	127/255	50%
+//analogWrite(191)	191/255	75%
+//analogWrite(255)	255/255	100%
+
+
 PS2X ps2x;
 AF_DCMotor motor1(1);
 AF_DCMotor motor2(2);
@@ -43,38 +58,32 @@ void setup() {
 
 void loop() {
   ps2x.read_gamepad(false, false); //motor 1 cho bên trái motor 2 cho bên phải 
+  //11 cho trái, 6 cho phải 
 if (ps2x.Analog(PSS_RX)<107)
 {
-  motor1.setSpeed( speed(50) ); //set speed for motor 1 at 50%
-  motor4.setSpeed( speed(50) );//set speed for motor 2 at 100%
+  analogWrite(11, 100);
+  analogWrite(6, 200);
 } else if (ps2x.Analog(PSS_RX)>147) 
 {
-  motor1.setSpeed( speed(50) );
-  motor4.setSpeed( speed(50) );
+  analogWrite(11, 200);
+  analogWrite(6, 100);
 } else if (ps2x.Analog(PSS_LY)<118)
 { 
-  motor1.setSpeed( speed(100) );
-  motor1.run(BACKWARD);
-  
-  motor4.setSpeed( speed(100) );
-  motor4.run(BACKWARD);
+  analogWrite(11, 50);
+  analogWrite(6, 50);
 } else if (ps2x.Analog(PSS_LY)>138)
 {
-  motor1.setSpeed( speed(100) );
-  motor1.run(FORWARD);
-  
-  motor4.setSpeed( speed(100) );
-  motor4.run(FORWARD); 
+  analogWrite(11, 150);
+  analogWrite(6, 150);
 } else 
 {
- motor1.setSpeed( speed(0) );
- motor4.setSpeed( speed(0) );
+ analogWrite(11, 0);
+ analogWrite(6, 0);
 }   
-  delay(2000);
+  delay(1000);
 }
 
 int  speed(int percent)
 {
   return map(percent, 0, 100, 0, 255);
 }
-
