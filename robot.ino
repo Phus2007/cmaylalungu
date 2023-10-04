@@ -15,40 +15,40 @@ byte vibrate = 0;
 
 void moveForward(int speed_motor)  //đi thẳng
 {
-  digitalWrite(in1, HIGH);
-  digitalWrite(in2, LOW);
+ digitalWrite(in1,LOW );
+  digitalWrite(in2, HIGH);
   analogWrite(enA, speed_motor);
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
+   digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
   analogWrite(enB, speed_motor);
   }
 void moveBack(int speed_motor) // đi lùi
 {
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
+ digitalWrite(in1,HIGH );
+  digitalWrite(in2, LOW);
   analogWrite(enA, speed_motor);
-    digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+   digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
   analogWrite(enB, speed_motor);
 }
 
-void turnLeft(int speed_motor)//rẽ trái
+void turnLeft(int speed_motor)//rẽ trái thẳng
 {
-  digitalWrite(in1,HIGH );
-  digitalWrite(in2, LOW);
+ digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
   analogWrite(enA, speed_motor);
-   digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
   analogWrite(enB, speed_motor);
 }
 
 void turnRight(int speed_motor)//rẽ phải
 {
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
+ digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
   analogWrite(enA, speed_motor);
-   digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
+    digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
   analogWrite(enB, speed_motor);
  }
  
@@ -71,7 +71,7 @@ void setup(){
 
  //CHANGES for v1.6 HERE!!! **************PAY ATTENTION*************
   
- error = ps2x.config_gamepad(13,11,10,12, true, true);   //setup pins and settings:  GamePad(clock, command, attention, data, Pressures?, Rumble?) check for error
+ error = ps2x.config_gamepad(12,11,13,10, true, true);   //setup pins and settings:  GamePad(clock, command, attention, data, Pressures?, Rumble?) check for error
  // CLK,MISO,SS,MOSI
  if(error == 0){
    Serial.println("Found Controller, configured successful");
@@ -232,11 +232,11 @@ void loop(){
     } 
     
   if(ps2x.Analog(PSS_RX)<107){
-    turnLeft(150);
+    turnLeft(255);
  }
  else if(ps2x.Analog(PSS_RX)>147)
  {
-  turnRight(150);
+  turnRight(255);
  }
  else if (ps2x.Analog(PSS_LY)<118)
 {
@@ -252,4 +252,3 @@ void loop(){
  delay(50);
  }
 }   
-
